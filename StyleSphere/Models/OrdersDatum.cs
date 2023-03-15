@@ -5,6 +5,10 @@ namespace StyleSphere.Models;
 
 public partial class OrdersDatum
 {
+    public OrdersDatum()
+    {
+        OrderDetails = new List<OrderDetail>();
+    }
     public int OrderId { get; set; }
 
     public int CustomerId { get; set; }

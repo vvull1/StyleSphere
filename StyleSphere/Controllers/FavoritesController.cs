@@ -41,63 +41,63 @@ namespace StyleSphere.Controllers
             return favorite;
         }
 
-        // PUT: api/Favorites/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFavorite(int id, Favorite favorite)
-        {
-            if (id != favorite.FavoritesId)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/Favorites/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutFavorite(int id, Favorite favorite)
+        //{
+        //    if (id != favorite.FavoritesId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(favorite).State = EntityState.Modified;
+        //    _context.Entry(favorite).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FavoriteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!FavoriteExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Favorites
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite)
-        {
-            _context.Favorites.Add(favorite);
-            await _context.SaveChangesAsync();
+        //// POST: api/Favorites
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite)
+        //{
+        //    _context.Favorites.Add(favorite);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFavorite", new { id = favorite.FavoritesId }, favorite);
-        }
+        //    return CreatedAtAction("GetFavorite", new { id = favorite.FavoritesId }, favorite);
+        //}
 
-        // DELETE: api/Favorites/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFavorite(int id)
-        {
-            var favorite = await _context.Favorites.FindAsync(id);
-            if (favorite == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Favorites/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteFavorite(int id)
+        //{
+        //    var favorite = await _context.Favorites.FindAsync(id);
+        //    if (favorite == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Favorites.Remove(favorite);
-            await _context.SaveChangesAsync();
+        //    _context.Favorites.Remove(favorite);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // GET: api/GetFavoritesbyCustomerId/5
         [Route("GetFavoritesbyCustomerId")]
@@ -113,6 +113,8 @@ namespace StyleSphere.Controllers
 
             return Ok(favorite);
         }
+
+        
 
         //SaveFavorites Method
         [HttpPost]

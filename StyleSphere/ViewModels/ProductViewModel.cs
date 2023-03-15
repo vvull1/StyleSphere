@@ -33,9 +33,9 @@ namespace StyleSphere.ViewModels
 
             public int NoofRatings { get; set; }
 
-            public List<SizesMaster> SizeList;
+            public List<SizesMaster> SizeList { get; set; }
 
-            public List<ColorMaster> ColorList;
+            public List<ColorMaster> ColorList { get; set; }
 
 
     }

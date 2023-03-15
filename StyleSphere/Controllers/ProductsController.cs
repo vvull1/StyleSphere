@@ -23,13 +23,13 @@ namespace StyleSphere.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductViewModel>>>getproducts()
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> getproducts()
         {
             // return await _context.products.tolistasync();
-            List<ProductViewModel> products = new List<ProductViewModel>();
+           // List<ProductViewModel> products = new List<ProductViewModel>();
             var product = _context.Products.ToList();
-            products = GetProductViewModels(products, product);
-            return Ok(products);
+            return GetProductViewModels(product);
+            //return Ok(products);
         }
 
         //public async Task<ActionResult<List<ProductViewModel>>> GetAllProducts()
@@ -91,73 +91,73 @@ namespace StyleSphere.Controllers
         public async Task<ActionResult<ProductViewModel>> GetProduct(int id)
         {
             List<ProductViewModel> products= new List<ProductViewModel>();
-            var product = _context.Products.Where(e => e.ProductId == id).ToList();
-            products = GetProductViewModels(products,product);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var Product = _context.Products.Where(e => e.ProductId == id).ToList();
+            products = GetProductViewModels(Product);
+            //if (product == null)
+            //{
+            //    return NotFound();
+            //}
 
             return Ok(products);
         }
 
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
-        {
-            if (id != product.ProductId)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/Products/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutProduct(int id, Product product)
+        //{
+        //    if (id != product.ProductId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(product).State = EntityState.Modified;
+        //    _context.Entry(product).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ProductExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
-        {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+        //// POST: api/Products
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Product>> PostProduct(Product product)
+        //{
+        //    _context.Products.Add(product);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
-        }
+        //    return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+        //}
 
-        // DELETE: api/Products/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Products/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteProduct(int id)
+        //{
+        //    var product = await _context.Products.FindAsync(id);
+        //    if (product == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+        //    _context.Products.Remove(product);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         ////GET PRODUCTS BY CATEGORY ID
         //[HttpGet("category/{categoryId}")]
@@ -235,8 +235,9 @@ namespace StyleSphere.Controllers
             return _context.Products.Any(e => e.ProductId == id);
         }
 
-        private List<ProductViewModel> GetProductViewModels(List<ProductViewModel> products, List<Product> product)
+        private List<ProductViewModel> GetProductViewModels(List<Product> product)
         {
+            List<ProductViewModel> products= new List<ProductViewModel>();
             foreach (var items in product)
             {
 
@@ -250,27 +251,39 @@ namespace StyleSphere.Controllers
                 model.ThumbnailImage = items.ThumbnailImage;
                 model.Price = items.Price;
                 model.Description = items.Description;
-                model.ColorCount = items.ProductMappings.Select(a => a.ColorId).Distinct().Count();
-                model.NoofRatings = items.Ratings.Count();
-                model.Ratings = (items.Ratings.Select(a => a.Rating1).Sum() / items.Ratings.Count());
+               // model.ColorCount = items.ProductMappings.Select(a => a.ColorId).Distinct().Count();
+               //Ratings count
+               var ratingsData = _context.Ratings.Where(a=>a.ProductId==items.ProductId).ToList();
+                model.NoofRatings = ratingsData.Count();
+                if(ratingsData.Count()>0)
+                    model.Ratings = (ratingsData.Sum(a => a.Rating1) / ratingsData.Count());
+                else
+                    model.Ratings = 0;
 
                 List<SizesMaster> sizeList = new List<SizesMaster>();
                 List<ColorMaster> ColorList = new List<ColorMaster>();
-                foreach (var item in items.ProductMappings)
+                var mappingsData = _context.ProductMappings.Where(a => a.ProductId == items.ProductId).ToList();
+                model.ColorCount = mappingsData.Select(a => a.ColorId).Distinct().Count();
+                foreach (var item in mappingsData)
                 {
                     var colorData = _context.ColorMasters.Where(a => a.ColorId == item.ColorId).FirstOrDefault();
                     var sizeData = _context.SizesMasters.Where(a => a.SizeId == item.SizeId).FirstOrDefault();
 
-                    SizesMaster objSize = new SizesMaster();
-                    objSize.SizeId = item.SizeId;
-                    objSize.Eusize = sizeData.Eusize;
-                    objSize.Ussize = sizeData.Ussize;
-                    sizeList.Add(objSize);
-
-                    ColorMaster objColor = new ColorMaster();
-                    objColor.ColorId = item.ColorId;
-                    objColor.Color = colorData.Color;
-                    ColorList.Add(objColor);
+                    if (sizeData != null)
+                    {
+                        SizesMaster objSize = new SizesMaster();
+                        objSize.SizeId = item.SizeId;
+                        objSize.Eusize = sizeData.Eusize;
+                        objSize.Ussize = sizeData.Ussize;
+                        sizeList.Add(objSize);
+                    }
+                    if (colorData != null)
+                    {
+                        ColorMaster objColor = new ColorMaster();
+                        objColor.ColorId = item.ColorId;
+                        objColor.Color = colorData.Color;
+                        ColorList.Add(objColor);
+                    }
                 }
                 model.ColorList = ColorList;
                 model.SizeList = sizeList;
@@ -288,8 +301,8 @@ namespace StyleSphere.Controllers
         {
             // return await _context.products.tolistasync();
             List<ProductViewModel> products = new List<ProductViewModel>();
-            var product = _context.Products.Where(a => a.CategoryId == id).ToList();
-            products = GetProductViewModels(products, product);
+            var Product = _context.Products.Where(a => a.CategoryId == id).ToList();
+            products = GetProductViewModels(Product);
             return Ok(products);
         }
 
@@ -300,8 +313,8 @@ namespace StyleSphere.Controllers
         {
             // return await _context.products.tolistasync();
             List<ProductViewModel> products = new List<ProductViewModel>();
-            var product = _context.Products.Where(a => a.SubCategoryId == id).ToList();
-            products = GetProductViewModels(products, product);
+            var Product = _context.Products.Where(a => a.SubCategoryId == id).ToList();
+            products = GetProductViewModels(Product);
             return Ok(products);
         }
 
@@ -312,8 +325,8 @@ namespace StyleSphere.Controllers
         {
             // return await _context.products.tolistasync();
             List<ProductViewModel> products = new List<ProductViewModel>();
-            var product = _context.Products.Where(p => p.Price <= maxprice).ToList();
-            products = GetProductViewModels(products, product);
+            var Product = _context.Products.Where(p => p.Price <= maxprice).ToList();
+            products = GetProductViewModels(Product);
             return Ok(products);
         }
 
@@ -327,7 +340,7 @@ namespace StyleSphere.Controllers
             // return await _context.products.tolistasync();
             List<ProductViewModel> products = new List<ProductViewModel>();
             var product = _context.Products.Where(s => s.ProductName.Contains(text) || s.Description.Contains(text)).ToList();
-            products = GetProductViewModels(products, product);
+            products = GetProductViewModels(product);
             return Ok(products);
         }
 

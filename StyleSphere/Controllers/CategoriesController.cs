@@ -36,84 +36,91 @@ namespace StyleSphere.Controllers
 
         }
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
+        //// GET: api/Categories/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Category>> GetCategory(int id)
+        //{
+        //    var category = await _context.Categories.FindAsync(id);
 
-            if (category == null)
-            {
-                return NotFound();
-            }
+        //    if (category == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return category;
-        }
+        //    return category;
+        //}
 
-        // PUT: api/Categories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
-        {
-            if (id != category.CategoryId)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/Categories/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutCategory(int id, Category category)
+        //{
+        //    if (id != category.CategoryId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(category).State = EntityState.Modified;
+        //    _context.Entry(category).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CategoryExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
-        {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+        //// POST: api/Categories
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Category>> PostCategory(Category category)
+        //{
+        //    _context.Categories.Add(category);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
-        }
+        //    return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
+        //}
 
-        // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Categories/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteCategory(int id)
+        //{
+        //    var category = await _context.Categories.FindAsync(id);
+        //    if (category == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+        //    _context.Categories.Remove(category);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         //ShowonTop Categories
-        [HttpGet("CategoriesOnTop")]
-        public async Task<List<Category>> GetShowOnTopCategories()
+        [HttpGet("ShowCategoriesOnTop")]
+        public async Task<ActionResult<Category>> GetShowOnTopCategories()
         {
-            var showontop= await _context.Categories.Where(x => x.ShowOnTop == true).ToListAsync();
-            return showontop;
+            var showontop= await _context.Categories.Where(x => x.ShowOnTop==true).Select(x => new CategoryViewModel
+            {
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
+                Description = x.Description,
+                ShowOnTop = x.ShowOnTop
+            }).ToListAsync();
+
+            return Ok(showontop);
         }
 
         private bool CategoryExists(int id)
