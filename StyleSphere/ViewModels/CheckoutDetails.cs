@@ -12,7 +12,7 @@
 
         public decimal Price { get; set; }
 
-        public decimal Total { get; set; }
+        //public decimal Total { get; set; }
 
         public bool ActiveStatus { get; set; }
     }

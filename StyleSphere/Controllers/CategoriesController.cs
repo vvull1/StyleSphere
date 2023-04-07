@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StyleSphere.Models;
+using StyleSphere.Services;
 using StyleSphere.ViewModels;
 
 namespace StyleSphere.Controllers
@@ -15,24 +16,38 @@ namespace StyleSphere.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly StyleSphereDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriesController(StyleSphereDbContext context)
+        public CategoriesController(StyleSphereDbContext context, ICategoryService categoryService)
         {
             _context = context;
+            _categoryService = categoryService;
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult getCategorybyId(int id)
+        {
+            var category = _categoryService.getCategory(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return Ok(category);
         }
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryViewModel>>> GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
+            return await _categoryService.getallCategories();
             // return await _context.Categories.ToListAsync();
-            return await _context.Categories.Select(item => new CategoryViewModel
-            {
-                CategoryId = item.CategoryId,
-                CategoryName = item.CategoryName,
-                Description = item.Description,
-                ShowOnTop = item.ShowOnTop
-            }).ToListAsync();
+            //return await _context.Categories.Select(item => new CategoryViewModel
+            //{
+            //    CategoryId = item.CategoryId,
+            //    CategoryName = item.CategoryName,
+            //    Description = item.Description,
+            //    ShowOnTop = item.ShowOnTop
+            //}).ToListAsync();
 
         }
 

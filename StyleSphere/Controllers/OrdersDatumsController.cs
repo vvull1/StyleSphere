@@ -169,6 +169,14 @@ namespace StyleSphere.Controllers
         }
 
 
+        //[Route("checkout")]
+        //[HttpPost]
+        //public async Task<IActionResult> Checkout(CheckoutMaster order)
+        //{
+        //    return await _orderDatumService.Checkout(order);
+
+        //}
+
 
 
         //CheckOut Api
@@ -200,12 +208,13 @@ namespace StyleSphere.Controllers
                     await _context.SaveChangesAsync();
                     foreach (var items in order.OrderDetails)
                     {
+                       // Multiple SaveChanges() calls, create separate transactions 
                         OrderDetail detail = new OrderDetail();
                         detail.Quantity = items.Quantity;
                         detail.Price = items.Price;
                         detail.ProductMappingId = items.ProductMappingId;
                         detail.OrderId = model.OrderId;
-                        detail.Total = items.Total;
+                        //detail.Total = items.Total;
                         detail.ActiveStatus = true;
                         _context.OrderDetails.Add(detail);
                         await _context.SaveChangesAsync();

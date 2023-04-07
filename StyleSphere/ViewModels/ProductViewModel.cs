@@ -9,8 +9,9 @@ namespace StyleSphere.ViewModels
             {
                 SizeList = new List<SizesMaster>();
                 ColorList = new List<ColorMaster>();
+                mappingList = new List<ProductMappingViewModel>();
 
-            }
+        }
             public int ProductId { get; set; }
 
             public string ProductName { get; set; }
@@ -32,8 +33,10 @@ namespace StyleSphere.ViewModels
             public decimal Ratings { get; set; }
 
             public int NoofRatings { get; set; }
+            public List<ProductMappingViewModel> mappingList { get; set; }
 
-            public List<SizesMaster> SizeList { get; set; }
+
+        public List<SizesMaster> SizeList { get; set; }
 
             public List<ColorMaster> ColorList { get; set; }
 

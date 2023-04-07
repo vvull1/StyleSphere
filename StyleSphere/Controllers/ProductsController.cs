@@ -262,10 +262,14 @@ namespace StyleSphere.Controllers
 
                 List<SizesMaster> sizeList = new List<SizesMaster>();
                 List<ColorMaster> ColorList = new List<ColorMaster>();
+                List<ProductMappingViewModel> mappings = new List<ProductMappingViewModel>();
                 var mappingsData = _context.ProductMappings.Where(a => a.ProductId == items.ProductId).ToList();
                 model.ColorCount = mappingsData.Select(a => a.ColorId).Distinct().Count();
                 foreach (var item in mappingsData)
                 {
+                    ProductMappingViewModel productMapping = new ProductMappingViewModel();
+                    productMapping.ProductMappingId = item.ProductMappingId;
+                    productMapping.ProductId = item.ProductId;
                     var colorData = _context.ColorMasters.Where(a => a.ColorId == item.ColorId).FirstOrDefault();
                     var sizeData = _context.SizesMasters.Where(a => a.SizeId == item.SizeId).FirstOrDefault();
 
@@ -274,7 +278,9 @@ namespace StyleSphere.Controllers
                         SizesMaster objSize = new SizesMaster();
                         objSize.SizeId = item.SizeId;
                         objSize.Eusize = sizeData.Eusize;
+                        productMapping.EUSize = sizeData.Eusize;
                         objSize.Ussize = sizeData.Ussize;
+                        productMapping.UsSize = sizeData.Ussize;
                         sizeList.Add(objSize);
                     }
                     if (colorData != null)
@@ -282,9 +288,12 @@ namespace StyleSphere.Controllers
                         ColorMaster objColor = new ColorMaster();
                         objColor.ColorId = item.ColorId;
                         objColor.Color = colorData.Color;
+                        productMapping.Color = colorData.Color;
                         ColorList.Add(objColor);
                     }
+                    mappings.Add(productMapping);
                 }
+                model.mappingList = mappings;
                 model.ColorList = ColorList;
                 model.SizeList = sizeList;
                 products.Add(model);
